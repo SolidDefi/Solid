@@ -11,7 +11,9 @@ def main():
     y = 2/3*((s)**(3/2)-(s-x)**(3/2))
     #update supply
     s = s-x
-    
+    z = y/x
     print("Amount in USDT you get: " +str(y))
+    print("Average Solid Price " + str(z))
     print("The current supply after you sold is: "+str(s))
+
 main()
