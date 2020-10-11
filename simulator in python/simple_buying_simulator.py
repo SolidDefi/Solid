@@ -12,10 +12,10 @@ def main():
     #update supply
     s = s+y
 
-    z = x/y
+    z = round(x/y, 2)
     
     print("Amount of token you get: " +str(y))
-    print("At an average price of " + str(z))
+    print("At an average price of $" + str(z))
     print("The current supply after you bought is: "+str(s))
 
 main()
