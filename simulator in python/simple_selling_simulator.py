@@ -12,8 +12,9 @@ def main():
     #update supply
     s = s-x
     z = y/x
-    print("Amount in USDT you get: " +str(y))
-    print("Average Solid Price " + str(z))
+    z = round(z,2)
+    print("Amount in USDT you get: $" +str(y))
+    print("Average Solid Price $" + str(z))
     print("The current supply after you sold is: "+str(s))
 
 main()
