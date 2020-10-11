@@ -11,7 +11,11 @@ def main():
     y = (3/2*x+s**(3/2))**(2/3)-s
     #update supply
     s = s+y
+
+    z = round(x/y, 2)
     
     print("Amount of token you get: " +str(y))
+    print("At an average price of $" + str(z))
     print("The current supply after you bought is: "+str(s))
+
 main()
