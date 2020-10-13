@@ -12,7 +12,7 @@ contract SolidERC20 is ISolidERC20 {
     string public override constant name = 'Solid';
     string public override constant symbol = '$olid';
     uint8 public override constant decimals = 18;
-    uint  public override totalSupply = 200000000 * 10 ** decimals;
+    uint public override totalSupply = 2000000000000 * 10 ** decimals;
     uint public override solidPrice;
     mapping(address => uint) public override balanceOf;
     mapping(address => mapping(address => uint)) public override allowance;
@@ -53,7 +53,34 @@ contract SolidERC20 is ISolidERC20 {
         //uint256 y = Math.cubic(x/(10**18));
         //y = y*10**12-totalSupply;
         
-        return Math.cubic((3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2/(10**18))*10**12-totalSupply;
+        //return Math.cubic((3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2/(10**18))*10**12-totalSupply;
+        
+        //new method
+        //from 18 to 27 decimals
+        
+        uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
+        uint256 squarert_supply= Math.sqrt_callable(cubic_supply);
+        uint256 x = (3*value/2*(10**2)+squarert_supply)/(10**2);
+        //x = Math.cubic(x);
+        //x = (x**2)*10**6;
+        x = x**2;
+        x = Math.cubic(x);
+        uint y = x*10**6-totalSupply;
+        return y;
+        //y = y*10**12-totalSupply;
+    }
+    
+    function burnOnsell(uint value) external view returns(uint256 z){
+        
+        uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
+        uint256 squarert_supply= Math.sqrt_callable(cubic_supply); 
+        
+        uint256 after_sell = totalSupply-value;
+        
+        uint256 cubic_supply_two = after_sell*after_sell/(10**14)*after_sell;
+        uint256 squarert_supply_two= Math.sqrt_callable(cubic_supply_two); 
+        
+        return (squarert_supply-squarert_supply_two)*2/(3*(10**2));
     }
     
      //address tokenID should be in the below function(mintOnbuy and burnOnsell);
@@ -74,6 +101,11 @@ contract SolidERC20 is ISolidERC20 {
         
     //    uint256 x = Math.sqrt_callable(totalSupply)**3-Math.sqrt_callable(totalSupply-value)**3
     //}
+    function mint(address to, uint value) internal {
+        totalSupply = totalSupply.add(value);
+        balanceOf[to] = balanceOf[to].add(value);
+        emit Transfer(address(0), to, value);
+    }
 
     function _mint(address to, uint value) internal {
         totalSupply = totalSupply.add(value);
