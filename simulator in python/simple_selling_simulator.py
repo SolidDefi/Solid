@@ -13,5 +13,6 @@ def main():
     s = s-x
     
     print("Amount in USDT you get: " +str(y))
+    print("Amount in USDT/token you get: " +str(y/x))
     print("The current supply after you sold is: "+str(s))
 main()

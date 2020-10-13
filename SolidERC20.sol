@@ -2,7 +2,8 @@ pragma solidity >=0.7.3;
 
 import './interfaces/ISolidERC20.sol';
 import './libraries/SafeMath.sol';
-import './libraries/Math.sol';
+//import './libraries/Math.sol';
+import './All_math.sol';
 
 
 contract SolidERC20 is ISolidERC20 {
@@ -11,7 +12,7 @@ contract SolidERC20 is ISolidERC20 {
     string public override constant name = 'Solid';
     string public override constant symbol = '$olid';
     uint8 public override constant decimals = 18;
-    uint  public override totalSupply;
+    uint  public override totalSupply = 200000000 * 10 ** decimals;
     uint public override solidPrice;
     mapping(address => uint) public override balanceOf;
     mapping(address => mapping(address => uint)) public override allowance;
@@ -43,16 +44,36 @@ contract SolidERC20 is ISolidERC20 {
     }
     
     
-    
-    function mintOnbuy(address tokenID, uint value) external{
+    //address tokenID should be in the below function(mintOnbuy and burnOnsell);
+    function mintOnbuy_regular(uint value) external view returns(uint256 z){
+        //require(balanceOf[msg.sender] > value, 'Not enough balance');
+        //uint256 x = Math.cubic((value*3/2+(Math.sqrt_callable(totalSupply)**3))**2);
         
-        uint exchangeRate = solidPrice/Math.sqrt(value);
+        //uint256 x = (3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2;
+        //uint256 y = Math.cubic(x/(10**18));
+        //y = y*10**12-totalSupply;
+        
+        return Math.cubic((3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2/(10**18))*10**12-totalSupply;
     }
     
-    function burnOnsell(address tokenID, uint value) external{
+     //address tokenID should be in the below function(mintOnbuy and burnOnsell);
+    function mintOnbuy_asquare_plus2ab_plus_bsquare(uint value) external view returns(uint256 z){
+        //require(balanceOf[msg.sender] > value, 'Not enough balance');
         
-        uint exchangeRate = solidPrice/Math.sqrt(value);
+        //uint256 b = (Math.sqrt_callable(totalSupply)**3)/(10**9);
+        //uint256 x = (3*value/2)**2+3*value*b+(totalSupply**3)/(10**18);
+        //x = x/(10**18);
+        //uint256 y = Math.cubic(x)*10**12-totalSupply;
+        
+        //((3*value/2)**2+3*value*((Math.sqrt_callable(totalSupply)**3)/(10**9))+(totalSupply**3)/(10**18))/(10**18)
+        return Math.cubic(((3*value/2)**2+3*value*((Math.sqrt_callable(totalSupply)**3)/(10**9))+(totalSupply**3)/(10**18))/(10**18))*10**12-totalSupply;
     }
+    
+    
+    //function burnOnsell(uint value) external{
+        
+    //    uint256 x = Math.sqrt_callable(totalSupply)**3-Math.sqrt_callable(totalSupply-value)**3
+    //}
 
     function _mint(address to, uint value) internal {
         totalSupply = totalSupply.add(value);
