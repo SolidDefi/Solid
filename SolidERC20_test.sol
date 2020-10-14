@@ -1,12 +1,12 @@
 pragma solidity >=0.7.3;
 
-import './interfaces/IERC20.sol';
+import './interfaces/ISolidERC20.sol';
 import './libraries/SafeMath.sol';
 //import './libraries/Math.sol';
 import './All_math.sol';
 
 
-contract SolidERC20 is IERC20 {
+contract SolidERC20 is ISolidERC20 {
     using SafeMath for uint;
 
     string public override constant name = 'Solid';
@@ -43,22 +43,60 @@ contract SolidERC20 is IERC20 {
         );
     }
     
-    
+    //more gas but more precision 10022 gas 141421356238 supply = 2000000000000 * 10 **
     //address tokenID should be in the below function(mintOnbuy and burnOnsell);
-    function mintOnbuy_regular(address tokenID, uint value) external returns(uint256 z){
-        require(IERC20(tokenID).balanceOf(msg.sender) >= value, 'Not enough balance');
-
+    function mintOnbuy_regular(uint value) external view returns(uint256 z){
+        //require(balanceOf[msg.sender] > value, 'Not enough balance');
+        //uint256 x = Math.cubic((value*3/2+(Math.sqrt_callable(totalSupply)**3))**2);
+        
+        //uint256 x = (3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2;
+        //uint256 y = Math.cubic(x/(10**18));
+        //y = y*10**12-totalSupply;
+        
+        //return Math.cubic((3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2/(10**18))*10**12-totalSupply;
+        
+        //new method
+        //from 18 to 27 decimals
+        
         uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
         uint256 squarert_supply= Math.sqrt_callable(cubic_supply);
         uint256 x = (3*value/2*(10**2)+squarert_supply);
+        //x = Math.cubic(x);
+        //x = (x**2)*10**6;
         x = x**2/(10**1);
         x = Math.cubic(x);
         uint y = x*10**5-totalSupply;
-        other_token_approve(tokenID, value);
-        other_token_transferFrom(tokenID, address(this), value);
         return y;
-        
+        //y = y*10**12-totalSupply;
     }
+	
+	//gas saving but less precision no less than 1414213562374 9889 gas supply = 2000000000000 * 10 **
+	//address tokenID should be in the below function(mintOnbuy and burnOnsell);
+    function mintOnbuy_regular(uint value) external view returns(uint256 z){
+        //require(balanceOf[msg.sender] > value, 'Not enough balance');
+        //uint256 x = Math.cubic((value*3/2+(Math.sqrt_callable(totalSupply)**3))**2);
+        
+        //uint256 x = (3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2;
+        //uint256 y = Math.cubic(x/(10**18));
+        //y = y*10**12-totalSupply;
+        
+        //return Math.cubic((3*value/2+(Math.sqrt_callable(totalSupply)**3/(10**9)))**2/(10**18))*10**12-totalSupply;
+        
+        //new method
+        //from 18 to 27 decimals
+        
+        uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
+        uint256 squarert_supply= Math.sqrt_callable(cubic_supply);
+        uint256 x = (3*value/2*(10**2)+squarert_supply)/(10**2);
+        //x = Math.cubic(x);
+        //x = (x**2)*10**6;
+        x = x**2;
+        x = Math.cubic(x);
+        uint y = x*10**6-totalSupply;
+        return y;
+        //y = y*10**12-totalSupply;
+    }
+	
     
     function burnOnsell(uint value) external view returns(uint256 z){
         
@@ -86,17 +124,11 @@ contract SolidERC20 is IERC20 {
         return Math.cubic(((3*value/2)**2+3*value*((Math.sqrt_callable(totalSupply)**3)/(10**9))+(totalSupply**3)/(10**18))/(10**18))*10**12-totalSupply;
     }
     
-    function other_token_approve(address tokenID, uint amount) public {
-        // Calling this function first from remix
-        IERC20(tokenID).approve(address(this), amount);
-        
-    }
-    function other_token_transferFrom(address tokenID, address to, uint amount) public {
-        // Then calling this function from remix
-        IERC20(tokenID).transferFrom(msg.sender, to, amount);
-    }
-
     
+    //function burnOnsell(uint value) external{
+        
+    //    uint256 x = Math.sqrt_callable(totalSupply)**3-Math.sqrt_callable(totalSupply-value)**3
+    //}
     function mint(address to, uint value) internal {
         totalSupply = totalSupply.add(value);
         balanceOf[to] = balanceOf[to].add(value);
