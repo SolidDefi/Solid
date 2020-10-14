@@ -12,7 +12,8 @@ contract SolidERC20 is IERC20 {
     string public override constant name = 'Solid';
     string public override constant symbol = '$olid';
     uint8 public override constant decimals = 18;
-    uint public override totalSupply = 2000000000000 * 10 ** decimals;
+    //uint public override totalSupply = 2000000000000 * 10 ** decimals;
+    uint public override totalSupply = 1 * 10 ** decimals;
     uint public override solidPrice;
     mapping(address => uint) public override balanceOf;
     mapping(address => mapping(address => uint)) public override allowance;
@@ -46,7 +47,7 @@ contract SolidERC20 is IERC20 {
     
     //address tokenID should be in the below function(mintOnbuy and burnOnsell);
     function mintOnbuy_regular(address tokenID, uint value) external returns(uint256 z){
-        require(IERC20(tokenID).balanceOf(msg.sender) >= value, 'Not enough balance');
+        //require(IERC20(tokenID).balanceOf(msg.sender) >= value, 'Not enough other token balance');
 
         uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
         uint256 squarert_supply= Math.sqrt_callable(cubic_supply);
@@ -54,14 +55,14 @@ contract SolidERC20 is IERC20 {
         x = x**2/(10**1);
         x = Math.cubic(x);
         uint y = x*10**5-totalSupply;
-        other_token_approve(tokenID, value);
         other_token_transferFrom(tokenID, address(this), value);
-        return y;
+        _mint(msg.sender, y);
+        //return y;
         
     }
     
-    function burnOnsell(uint value) external view returns(uint256 z){
-        
+    function burnOnsell(address tokenID,uint value) external returns(uint256 z){
+        //require(balanceOf[msg.sender] >= value, 'Not enough solid balance');
         uint256 cubic_supply = totalSupply*totalSupply/(10**14)*totalSupply;
         uint256 squarert_supply= Math.sqrt_callable(cubic_supply); 
         
@@ -70,38 +71,27 @@ contract SolidERC20 is IERC20 {
         uint256 cubic_supply_two = after_sell*after_sell/(10**14)*after_sell;
         uint256 squarert_supply_two= Math.sqrt_callable(cubic_supply_two); 
         
-        return (squarert_supply-squarert_supply_two)*2/(3*(10**2));
+        uint y = (squarert_supply-squarert_supply_two)*2/(3*(10**2));
+        other_token_transfer(tokenID, msg.sender,y);
+        _burn(msg.sender,value);
     }
     
-     //address tokenID should be in the below function(mintOnbuy and burnOnsell);
-    function mintOnbuy_asquare_plus2ab_plus_bsquare(uint value) external view returns(uint256 z){
-        //require(balanceOf[msg.sender] > value, 'Not enough balance');
-        
-        //uint256 b = (Math.sqrt_callable(totalSupply)**3)/(10**9);
-        //uint256 x = (3*value/2)**2+3*value*b+(totalSupply**3)/(10**18);
-        //x = x/(10**18);
-        //uint256 y = Math.cubic(x)*10**12-totalSupply;
-        
-        //((3*value/2)**2+3*value*((Math.sqrt_callable(totalSupply)**3)/(10**9))+(totalSupply**3)/(10**18))/(10**18)
-        return Math.cubic(((3*value/2)**2+3*value*((Math.sqrt_callable(totalSupply)**3)/(10**9))+(totalSupply**3)/(10**18))/(10**18))*10**12-totalSupply;
-    }
     
-    function other_token_approve(address tokenID, uint amount) public {
-        // Calling this function first from remix
-        IERC20(tokenID).approve(address(this), amount);
-        
-    }
-    function other_token_transferFrom(address tokenID, address to, uint amount) public {
+    
+    
+    function other_token_transferFrom(address tokenID, address to, uint amount) public payable{
         // Then calling this function from remix
         IERC20(tokenID).transferFrom(msg.sender, to, amount);
     }
-
     
-    function mint(address to, uint value) internal {
-        totalSupply = totalSupply.add(value);
-        balanceOf[to] = balanceOf[to].add(value);
-        emit Transfer(address(0), to, value);
+    function other_token_transfer(address tokenID, address to, uint amount) public payable{
+        // Then calling this function from remix
+        IERC20(tokenID).transfer(to, amount);
     }
+ 
+   
+
+
 
     function _mint(address to, uint value) internal {
         totalSupply = totalSupply.add(value);
