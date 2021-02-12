@@ -8,7 +8,7 @@ def main():
     s = float(input("Enter the current supply of the token:"))
     
     #formula for calculation
-    y = (3/2*x+s**(3/2))**(2/3)-s
+    y = (100*x+s**(100))**(1/100)-s
     #update supply
     s = s+y
 

@@ -18,3 +18,4 @@ def main():
     print("The current supply after you sold is: "+str(s))
 
 main()
+
