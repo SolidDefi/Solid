@@ -4,6 +4,6 @@ Audit
 
 [x] Reentrancy attack
 
-[ ] Gap in 'mintOnBuy' and 'burnOnSell'
+[x] Gap in 'mintOnBuy' and 'burnOnSell'
 
 [ ] mintOngas
