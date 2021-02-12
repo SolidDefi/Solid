@@ -1,1 +1,3 @@
-"# Solid" 
+Solid protocol
+
+[x] Reward calculation
