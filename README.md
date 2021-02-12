@@ -1,3 +1,7 @@
 Solid protocol
 
-[x] Reward calculation
+Audit
+
+[x] Reentrancy attack
+[ ] Gap in 'mintOnBuy' and 'burnOnSell'
+[ ] mintOngas
